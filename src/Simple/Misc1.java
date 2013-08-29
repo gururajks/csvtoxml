@@ -1,9 +1,12 @@
 package Simple;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -20,7 +23,7 @@ import javax.xml.stream.events.StartElement;
 public class Misc1 {
 
 	public final static String folderPath = "C:/Users/gururajks/Downloads/MBTA_GTFS/";
-	public final static String xmlPath = "C:/Users/gururajks/Downloads/MBTA_GTFS/trips.xml";
+	public final static String txtPath = "C:/Users/gururajks/Downloads/MBTA_GTFS/trips_stripped.txt";
 	XMLOutputFactory outputFactory;
 	XMLEventWriter eventWriter;
 	XMLEventFactory eventFactory;
@@ -33,68 +36,51 @@ public class Misc1 {
 		
 		String line;
 		try {
-			misc.createXml();
+			//misc.createXml();
 			fileIn = new FileInputStream(folderPath + "trips.txt");
 			BufferedReader buffreader = new BufferedReader(new InputStreamReader(fileIn));
 			int count = 0;
+			File file = new File(txtPath);
+			FileWriter fileWriter = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(fileWriter);
 			while((line = buffreader.readLine()) != null) {
 				System.out.println(count);
 				if(count == 0) {
 					count++;
 					continue;
 				}
-				misc.processString(line);
+				String newFileLine = misc.processString(line);
+				bw.write(newFileLine);
+				bw.newLine();
 				count++;
 			}
-			misc.endXml();
+			bw.close();
+			//misc.endXml();
 			buffreader.close();
 		} catch (FileNotFoundException e) {			
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		}
 		
 		
 	}
 
-	private void processString(String line) throws XMLStreamException {
-		XMLEventFactory nodeEventFactory = XMLEventFactory.newInstance();		
-		StartElement sElement = nodeEventFactory.createStartElement("", "", "trip");	    
-	    eventWriter.add(sElement);
+	private String processString(String line) throws IOException {		
+		String newFileLine="";
 		String[] stringItems = line.split(",");
-		String strippedStringItem = "";
 		for(int i = 0 ; i < stringItems.length; i++) {
-			String stringItem = stringItems[i];
-			int stringItemSize = stringItem.length();
-			if(stringItem.contains("\"")) {
-				strippedStringItem = stringItem.substring(1, stringItemSize - 1);
-			}
-			else {
-				strippedStringItem = stringItem;
-			}			
+			
+			String stringItem = stringItems[i];			
 			if(i == 0)	
-				addToXml(strippedStringItem, "route_id");
-			/*if(i == 1)
-				addToXml(strippedStringItem, "service_id");
-			if(i == 2)
-				addToXml(strippedStringItem, "trip_id");
-			if(i == 3)
-				addToXml(strippedStringItem, "trip_headsign");
-			if(i == 4)
-				addToXml(strippedStringItem, "direction_id");
-			if(i == 5)
-				addToXml(strippedStringItem, "block_id");
-				*/
+				newFileLine += stringItem;						
 			if(i == 6)
-				addToXml(strippedStringItem, "shape_id");
+				newFileLine = newFileLine + "," + stringItem;			
 		}
-		EndElement eElement = nodeEventFactory.createEndElement("", "", "trip");
-	    eventWriter.add(eElement);
+		return newFileLine;
 	}
 	
-	
+	/*
 	public void createXml() throws XMLStreamException, FileNotFoundException {
 		outputFactory = XMLOutputFactory.newInstance();
 		eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(xmlPath));
@@ -124,5 +110,5 @@ public class Misc1 {
 	    eventWriter.add(eElement);
 	}
 		
-	
+	*/
 }
