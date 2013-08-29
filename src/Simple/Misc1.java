@@ -23,7 +23,7 @@ import javax.xml.stream.events.StartElement;
 public class Misc1 {
 
 	public final static String folderPath = "C:/Users/gururajks/Downloads/MBTA_GTFS/";
-	public final static String txtPath = "C:/Users/gururajks/Downloads/MBTA_GTFS/trips_stripped.txt";
+	public final static String txtPath = "C:/Users/gururajks/Downloads/MBTA_GTFS/trips_modificed.csv";
 	XMLOutputFactory outputFactory;
 	XMLEventWriter eventWriter;
 	XMLEventFactory eventFactory;
@@ -37,7 +37,7 @@ public class Misc1 {
 		String line;
 		try {
 			//misc.createXml();
-			fileIn = new FileInputStream(folderPath + "trips.txt");
+			fileIn = new FileInputStream(folderPath + "trips_rail_sql.csv");
 			BufferedReader buffreader = new BufferedReader(new InputStreamReader(fileIn));
 			int count = 0;
 			File file = new File(txtPath);
@@ -46,10 +46,11 @@ public class Misc1 {
 			while((line = buffreader.readLine()) != null) {
 				System.out.println(count);
 				if(count == 0) {
-					count++;
-					continue;
+					//count++;
+					//continue;
 				}
-				String newFileLine = misc.processString(line);
+				//String newFileLine = misc.processString(line);
+				String newFileLine = line + ",";
 				bw.write(newFileLine);
 				bw.newLine();
 				count++;
